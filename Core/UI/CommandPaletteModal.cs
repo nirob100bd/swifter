@@ -8,8 +8,8 @@ namespace Swifter.Core.UI;
 
 public sealed class CommandPaletteModal : Window
 {
-    private readonly TextBox _searchBox;
-    private readonly StackPanel _resultsPanel;
+    private TextBox _searchBox;
+    private StackPanel _resultsPanel;
     private readonly List<CommandEntry> _commands;
     private string _selectedCommandId = "";
 
@@ -90,7 +90,7 @@ public sealed class CommandPaletteModal : Window
         var scrollViewer = new ScrollViewer { MaxHeight = 340, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         _resultsPanel = new StackPanel { Margin = new Thickness(4) };
         scrollViewer.Content = _resultsPanel;
-        stack.Children.Add scrollViewer;
+        stack.Children.Add(scrollViewer);
         border.Child = stack;
         Content = border;
         Loaded += (_, _) => _searchBox.Focus();

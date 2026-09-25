@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using Swifter.Core.Config;
 using Swifter.Core.Storage;
 
@@ -10,11 +11,11 @@ namespace Swifter.Core.UI;
 
 public sealed class AddressBarControl : UserControl
 {
-    private readonly TextBox _addressBox;
-    private readonly Border _container;
-    private readonly Popup _suggestionsPopup;
-    private readonly StackPanel _suggestionsPanel;
-    private readonly Border _securityIndicator;
+    private readonly TextBox _addressBox = null!;
+    private readonly Border _container = null!;
+    private readonly Popup _suggestionsPopup = null!;
+    private readonly StackPanel _suggestionsPanel = null!;
+    private readonly Border _securityIndicator = null!;
 
     public event EventHandler<string>? NavigationRequested;
 
@@ -138,7 +139,8 @@ public sealed class AddressBarControl : UserControl
             return;
         }
 
-        var history = await HistoryDatabase.Instance.SearchAsync(text, 8);
+        using var historyDb = new HistoryDatabase();
+        var history = await historyDb.SearchAsync(text, 8);
         _suggestionsPanel.Children.Clear();
         foreach (var entry in history)
         {
