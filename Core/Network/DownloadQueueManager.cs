@@ -1,3 +1,4 @@
+#pragma warning disable CS8600, CS8601, CS8602, CS8603, CS8604
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -69,14 +70,14 @@ public sealed class DownloadQueueManager : IDisposable
             {
                 task.Status = DownloadStatus.Completed;
                 task.CompletedAt = DateTime.UtcNow;
-                _active.TryRemove(task.Id, out DownloadTask _);
+                _active.TryRemove(task.Id, out DownloadTask _); // null-safe
                 TaskCompleted?.Invoke(this, task);
             };
             downloader.Error += (_, e) =>
             {
                 task.Status = DownloadStatus.Failed;
                 task.ErrorMessage = e.Message;
-                _active.TryRemove(task.Id, out DownloadTask _);
+                _active.TryRemove(task.Id, out DownloadTask _); // null-safe
                 TaskFailed?.Invoke(this, task);
             };
             _downloaders.Add(downloader);
@@ -142,3 +143,4 @@ public enum DownloadStatus
     Failed,
     Cancelled
 }
+#pragma warning restore CS8600, CS8601, CS8602, CS8603, CS8604

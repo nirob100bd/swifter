@@ -57,7 +57,13 @@ public sealed class CanvasWhiteboardModal : Window
         {
             Orientation = Orientation.Horizontal,
             Background = new SolidColorBrush(Color.FromRgb(24, 24, 28)),
-            Padding = new Thickness(12, 6, 12, 6)
+            Margin = new Thickness(0)
+        };
+        var toolbarBorder = new Border
+        {
+            Background = new SolidColorBrush(Color.FromRgb(24, 24, 28)),
+            Padding = new Thickness(12, 6, 12, 6),
+            Child = toolbar
         };
         toolbar.MouseLeftButtonDown += (_, _) => DragMove();
         toolbar.Children.Add(new TextBlock { Text = "🎨 Whiteboard", FontSize = 14, FontWeight = FontWeights.SemiBold, Foreground = Brushes.White, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 16, 0) });
@@ -107,6 +113,6 @@ public sealed class CanvasWhiteboardModal : Window
         var closeBtn = new Button { Content = "✕", Width = 28, Height = 28, FontSize = 12, Background = new SolidColorBrush(Color.FromRgb(196, 43, 28)), Foreground = Brushes.White, BorderThickness = new Thickness(0), Cursor = Cursors.Hand, Margin = new Thickness(8, 0, 0, 0) };
         closeBtn.Click += (_, _) => Close();
         toolbar.Children.Add(closeBtn);
-        return toolbar;
+        return toolbarBorder;
     }
 }
