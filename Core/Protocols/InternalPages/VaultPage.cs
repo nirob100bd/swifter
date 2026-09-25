@@ -4,8 +4,8 @@ public static class VaultPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("Password Vault", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("Password Vault", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">🔐</span> Password Vault</h1>
             <p class="subtitle">Encrypted credential storage using Windows DPAPI + AES-256</p>
             <div class="card" style="background:#1a2a1a;border:1px solid #2a4a2a;">

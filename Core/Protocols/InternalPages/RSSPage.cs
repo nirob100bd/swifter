@@ -4,8 +4,8 @@ public static class RSSPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("RSS Feeds", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("RSS Feeds", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">📰</span> RSS Feeds</h1>
             <p class="subtitle">Stay updated with your favorite content</p>
             <div style="display:flex;gap:8px;margin-bottom:16px;">

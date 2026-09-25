@@ -1,7 +1,3 @@
-using System.Collections.Concurrent;
-using System.Net.WebSockets;
-using System.Text;
-
 namespace Swifter.Core.Network;
 
 public sealed class WebSocketsDebuggerEngine : IDisposable
@@ -76,7 +72,7 @@ public sealed class WebSocketsDebuggerEngine : IDisposable
                 {
                     ConnectionId = conn.Id,
                     Direction = MessageDirection.Incoming,
-                    Data = Encoding.UTF8.GetString(buffer, 0, result.Count),
+                    Data = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count),
                     MessageType = result.MessageType == WebSocketMessageType.Text ? "text" : "binary",
                     Timestamp = DateTime.UtcNow
                 };
@@ -95,7 +91,7 @@ public sealed class WebSocketsDebuggerEngine : IDisposable
     {
         if (!_connections.TryGetValue(connectionId, out var conn)) return;
         if (conn.WebSocket.State != WebSocketState.Open) return;
-        var bytes = Encoding.UTF8.GetBytes(data);
+        var bytes = System.Text.Encoding.UTF8.GetBytes(data);
         await conn.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
         var message = new WebSocketMessage
         {
@@ -138,23 +134,30 @@ public sealed class WebSocketsDebuggerEngine : IDisposable
     {
         List<WebSocketMessage> messages;
         lock (_logLock) messages = _messageLog.ToList();
-        return $"""
+        var msgHtml = string.Join("", messages.Select(m =>
+        {
+            var cls = m.Direction == MessageDirection.Incoming ? "incoming" : "outgoing";
+            var arrow = m.Direction == MessageDirection.Incoming ? "◀" : "▶";
+            var data = System.Net.WebUtility.HtmlEncode(m.Data.Length > 500 ? m.Data[..500] + "..." : m.Data);
+            return $"""
+                <div class="msg {cls}">
+                    <span class="time">{m.Timestamp:HH:mm:ss.fff}</span>
+                    <span class="dir">{arrow}</span>
+                    {data}
+                </div>
+                """;
+        }));
+        return $$"""
             <html><head><style>
-            body {{ font-family: 'Cascadia Code', monospace; background: #0d1117; color: #c9d1d9; padding: 16px; }}
-            .msg {{ padding: 8px 12px; margin: 4px 0; border-radius: 6px; font-size: 13px; }}
-            .incoming {{ background: #161b22; border-left: 3px solid #58a6ff; }}
-            .outgoing {{ background: #161b22; border-left: 3px solid #3fb950; }}
-            .time {{ color: #8b949e; font-size: 11px; }}
-            .dir {{ font-weight: bold; margin-right: 8px; }}
-            h1 {{ color: #58a6ff; font-size: 20px; }}
+            body { font-family: 'Cascadia Code', monospace; background: #0d1117; color: #c9d1d9; padding: 16px; }
+            .msg { padding: 8px 12px; margin: 4px 0; border-radius: 6px; font-size: 13px; }
+            .incoming { background: #161b22; border-left: 3px solid #58a6ff; }
+            .outgoing { background: #161b22; border-left: 3px solid #3fb950; }
+            .time { color: #8b949e; font-size: 11px; }
+            .dir { font-weight: bold; margin-right: 8px; }
+            h1 { color: #58a6ff; font-size: 20px; }
             </style></head><body><h1>🔌 WebSocket Debugger</h1>
-            {string.Join("", messages.Select(m => $"""
-            <div class="msg {(m.Direction == MessageDirection.Incoming ? "incoming" : "outgoing")}">
-                <span class="time">{m.Timestamp:HH:mm:ss.fff}</span>
-                <span class="dir">{(m.Direction == MessageDirection.Incoming ? "◀" : "▶")}</span>
-                {System.Net.WebUtility.HtmlEncode(m.Data.Length > 500 ? m.Data[..500] + "..." : m.Data)}
-            </div>
-            """))}
+            {{msgHtml}}
             </body></html>
             """;
     }

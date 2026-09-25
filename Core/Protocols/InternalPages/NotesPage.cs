@@ -4,8 +4,8 @@ public static class NotesPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("Notes", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("Notes", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">📝</span> Notes</h1>
             <p class="subtitle">Your web clips and quick notes</p>
             <input type="text" id="searchBox" class="search-box" placeholder="Search notes..." oninput="searchFilter('searchBox','.note-card')">

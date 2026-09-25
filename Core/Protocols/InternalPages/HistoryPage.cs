@@ -4,8 +4,8 @@ public static class HistoryPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("History", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("History", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">📜</span> History</h1>
             <p class="subtitle">Your browsing history</p>
             <input type="text" id="searchBox" class="search-box" placeholder="Search history..." oninput="searchFilter('searchBox','.history-item')">

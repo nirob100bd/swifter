@@ -131,25 +131,32 @@ public sealed class RSSFeedReaderEngine : IDisposable
 
     public string GenerateRssPageHtml()
     {
-        return $"""
+        var articlesHtml = string.Join("", _items.OrderByDescending(i => i.PublishedAt).Take(50).Select(i =>
+        {
+            var cls = i.IsRead ? "" : "unread";
+            var title = System.Net.WebUtility.HtmlEncode(i.Title);
+            var summary = System.Net.WebUtility.HtmlEncode(i.Summary);
+            return $"""
+                <div class="item {cls}" onclick="window.location.href='{i.Url}'">
+                    <div class="title">{title}</div>
+                    <div class="summary">{summary}</div>
+                    <div class="meta">{i.PublishedAt:MMM d, yyyy} · {i.FeedUrl}</div>
+                </div>
+                """;
+        }));
+        return $$"""
             <html><head><style>
-            body {{ font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 32px; }}
-            h1 {{ color: #0078d4; font-size: 24px; }}
-            .item {{ background: #22223a; border-radius: 10px; padding: 16px 20px; margin: 8px 0; cursor: pointer; }}
-            .item:hover {{ background: #2a2a40; }}
-            .item.unread {{ border-left: 3px solid #0078d4; }}
-            .title {{ font-size: 15px; font-weight: 600; color: #fff; }}
-            .summary {{ font-size: 13px; color: #888; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }}
-            .meta {{ font-size: 11px; color: #555; margin-top: 6px; }}
-            .badge {{ background: #c23; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px; }}
-            </style></head><body><h1>📰 RSS Reader <span class="badge">{UnreadCount} unread</span></h1>
-            {string.Join("", _items.OrderByDescending(i => i.PublishedAt).Take(50).Select(i => $"""
-            <div class="item {(i.IsRead ? "" : "unread")}" onclick="window.location.href='{i.Url}'">
-                <div class="title">{System.Net.WebUtility.HtmlEncode(i.Title)}</div>
-                <div class="summary">{System.Net.WebUtility.HtmlEncode(i.Summary)}</div>
-                <div class="meta">{i.PublishedAt:MMM d, yyyy} · {i.FeedUrl}</div>
-            </div>
-            """))}
+            body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 32px; }
+            h1 { color: #0078d4; font-size: 24px; }
+            .item { background: #22223a; border-radius: 10px; padding: 16px 20px; margin: 8px 0; cursor: pointer; }
+            .item:hover { background: #2a2a40; }
+            .item.unread { border-left: 3px solid #0078d4; }
+            .title { font-size: 15px; font-weight: 600; color: #fff; }
+            .summary { font-size: 13px; color: #888; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            .meta { font-size: 11px; color: #555; margin-top: 6px; }
+            .badge { background: #c23; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px; }
+            </style></head><body><h1>📰 RSS Reader <span class="badge">{{UnreadCount}} unread</span></h1>
+            {{articlesHtml}}
             </body></html>
             """;
     }

@@ -60,16 +60,16 @@ public sealed class SwifterSchemeHandler
 
     private static string GetNotFoundPage(string page)
     {
-        return $"""
+        return $$"""
             <html><head><style>
-            body{{font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:#e0e0e0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}}
-            .container{{text-align:center;}}
-            h1{{font-size:72px;color:#333;margin:0;}}
-            h2{{color:#888;font-weight:400;margin:8px 0 24px;}}
-            a{{color:#0078d4;text-decoration:none;}}
+            body{font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:#e0e0e0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+            .container{text-align:center;}
+            h1{font-size:72px;color:#333;margin:0;}
+            h2{color:#888;font-weight:400;margin:8px 0 24px;}
+            a{color:#0078d4;text-decoration:none;}
             </style></head><body><div class="container">
             <h1>404</h1>
-            <h2>Page not found: swifter://{page}</h2>
+            <h2>Page not found: swifter://{{page}}</h2>
             <a href="swifter://newtab">← Back to New Tab</a>
             </div></body></html>
             """;
