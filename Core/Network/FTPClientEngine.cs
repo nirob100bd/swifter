@@ -1,3 +1,4 @@
+#pragma warning disable SYSLIB0014
 using System.IO;
 using System.Net;
 
@@ -201,3 +202,4 @@ public sealed class FtpEntry
     public bool IsDirectory { get; set; }
     public string FullPath { get; set; } = "";
 }
+#pragma warning restore SYSLIB0014

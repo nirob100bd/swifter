@@ -22,7 +22,7 @@ public sealed class MainWindow : Window
     private readonly Dictionary<int, WebView2> _webViews = new();
     private readonly DwmGlassManager _glassManager;
     private readonly WindowDragEngine _dragEngine;
-    private readonly StatusBarItem _statusBar;
+    private readonly TextBlock _statusBar;
     private WebView2? _activeWebView;
 
     public MainWindow()
