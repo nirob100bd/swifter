@@ -1,0 +1,191 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CONFIGURATION: 'Release'
+  RUNTIME: 'win-x64'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          if ("${{ github.event_name }}" -eq "push") {
+            $tag = "${{ github.ref_name }}" -replace '^v',''
+            echo "VERSION=$tag" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "VERSION=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Restore dependencies
+        run: dotnet restore Swifter.csproj -r ${{ env.RUNTIME }}
+
+      - name: Build application
+        run: >
+          dotnet build Swifter.csproj
+          -c ${{ env.CONFIGURATION }}
+          -r ${{ env.RUNTIME }}
+          --no-restore
+          /p:Version=${{ steps.version.outputs.VERSION }}
+
+      - name: Publish application
+        run: >
+          dotnet publish Swifter.csproj
+          -c ${{ env.CONFIGURATION }}
+          -r ${{ env.RUNTIME }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -o publish/app
+          /p:Version=${{ steps.version.outputs.VERSION }}
+
+      - name: Create portable ZIP
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.VERSION }}"
+          $zipPath = "publish/Swifter_v${version}_Portable.zip"
+          Compress-Archive -Path "publish/app/*" -DestinationPath $zipPath -Force
+          $size = (Get-Item $zipPath).Length / 1MB
+          Write-Host "Portable ZIP created: $zipPath ($([math]::Round($size, 2)) MB)"
+
+      - name: Build installer with Inno Setup
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.VERSION }}"
+          choco install innosetup -y --no-progress 2>$null
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { $iscc = "$env:ProgramFiles\Inno Setup 6\ISCC.exe" }
+
+          $issContent = @"
+          [Setup]
+          AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
+          AppName=Swifter Browser
+          AppVersion=$version
+          AppPublisher=nirob100bd
+          AppPublisherURL=https://github.com/nirob100bd/swifter
+          DefaultDirName={autopf}\Swifter
+          DefaultGroupName=Swifter Browser
+          AllowNoIcons=yes
+          OutputDir=publish
+          OutputBaseFilename=Swifter_Setup_v$version
+          SetupIconFile=Assets\app.ico
+          Compression=lzma2/ultra64
+          SolidCompression=yes
+          WizardStyle=modern
+          ArchitecturesAllowed=x64
+          ArchitecturesInstallIn64BitMode=x64
+          PrivilegesRequired=lowest
+          UninstallDisplayName=Swifter Browser
+
+          [Languages]
+          Name: "english"; MessagesFile: "compiler:Default.isl"
+
+          [Tasks]
+          Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
+          Name: "startmenu"; Description: "Create Start Menu shortcuts"; GroupDescription: "Additional shortcuts:"
+
+          [Files]
+          Source: "publish\app\Swifter.exe"; DestDir: "{app}"; Flags: ignoreversion
+          Source: "publish\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+          [Icons]
+          Name: "{group}\Swifter Browser"; Filename: "{app}\Swifter.exe"
+          Name: "{group}\Uninstall Swifter"; Filename: "{uninstallexe}"
+          Name: "{autodesktop}\Swifter Browser"; Filename: "{app}\Swifter.exe"; Tasks: desktopicon
+
+          [Run]
+          Filename: "{app}\Swifter.exe"; Description: "Launch Swifter Browser"; Flags: nowait postinstall skipifsilent
+
+          [Registry]
+          Root: HKCU; Subkey: "Software\Swifter"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+          Root: HKCU; Subkey: "Software\Swifter"; ValueType: string; ValueName: "Version"; ValueData: "$version"
+          "@
+
+          Set-Content -Path "Installer\SwifterSetup.iss" -Value $issContent -Encoding UTF8
+
+          if (Test-Path $iscc) {
+            & $iscc "Installer\SwifterSetup.iss"
+            if ($LASTEXITCODE -ne 0) { Write-Warning "Inno Setup build failed, continuing with portable only." }
+          } else {
+            Write-Warning "Inno Setup not found. Installer EXE will not be created."
+          }
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: swifter-build-${{ steps.version.outputs.VERSION }}
+          path: |
+            publish/Swifter_Setup_v${{ steps.version.outputs.VERSION }}.exe
+            publish/Swifter_v${{ steps.version.outputs.VERSION }}_Portable.zip
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Swifter ${{ github.ref_name }}"
+          body: |
+            ## ⚡ Swifter ${{ github.ref_name }}
+
+            ### Downloads
+            - **Swifter_Setup_v${{ steps.version.outputs.VERSION }}.exe** — Windows installer with desktop shortcut and Start Menu entry
+            - **Swifter_v${{ steps.version.outputs.VERSION }}_Portable.zip** — Portable version (no installation required)
+
+            ### System Requirements
+            - Windows 10/11 x64
+            - .NET 8.0 Runtime (included in self-contained build)
+            - 4 GB RAM minimum, 8 GB recommended
+
+            ### What's New
+            - Enterprise-grade browser with Mica glass UI
+            - 32-stream parallel downloader
+            - Aho-Corasick ad & tracker blocking
+            - Encrypted password vault (AES-256 + DPAPI)
+            - Mouse gestures, Boss Key, Command Palette
+            - RSS reader, media sniffer, torrent streaming
+            - Multi-profile sandbox, tab hibernation
+            - Full keyboard shortcut customization
+
+            ---
+            *Built automatically by GitHub Actions*
+          files: |
+            publish/Swifter_Setup_v${{ steps.version.outputs.VERSION }}.exe
+            publish/Swifter_v${{ steps.version.outputs.VERSION }}_Portable.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
