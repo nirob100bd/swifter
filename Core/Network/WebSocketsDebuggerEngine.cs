@@ -1,3 +1,7 @@
+using System.Collections.Concurrent;
+using System.Net.WebSockets;
+using System.Text;
+
 namespace Swifter.Core.Network;
 
 public sealed class WebSocketsDebuggerEngine : IDisposable
