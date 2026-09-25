@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
+using System.IO;
 
 namespace Swifter.Core.Storage;
 
@@ -193,7 +194,6 @@ public sealed class VaultDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
-using System.IO;
             cmd.CommandText = "DELETE FROM credentials; DELETE FROM credit_cards; DELETE FROM form_data;";
             await cmd.ExecuteNonQueryAsync();
         }

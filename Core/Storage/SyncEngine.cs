@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.IO;
 
 namespace Swifter.Core.Storage;
 
@@ -103,7 +104,6 @@ public sealed class SyncEngine
         Buffer.BlockCopy(encrypted, 0, iv, 0, 16);
         aes.IV = iv;
         using var decryptor = aes.CreateDecryptor();
-using System.IO;
         var decrypted = decryptor.TransformFinalBlock(encrypted, 16, encrypted.Length - 16);
         return Encoding.UTF8.GetString(decrypted);
     }
