@@ -69,14 +69,14 @@ public sealed class DownloadQueueManager : IDisposable
             {
                 task.Status = DownloadStatus.Completed;
                 task.CompletedAt = DateTime.UtcNow;
-                _active.TryRemove(task.Id, out _);
+                _active.TryRemove(task.Id, out DownloadTask _);
                 TaskCompleted?.Invoke(this, task);
             };
             downloader.Error += (_, e) =>
             {
                 task.Status = DownloadStatus.Failed;
                 task.ErrorMessage = e.Message;
-                _active.TryRemove(task.Id, out _);
+                _active.TryRemove(task.Id, out DownloadTask _);
                 TaskFailed?.Invoke(this, task);
             };
             _downloaders.Add(downloader);
