@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Web.WebView2.Core;
 
 namespace Swifter.Core.Storage;
@@ -14,16 +15,18 @@ public sealed class CookieManager
         _cookieManager = manager;
     }
 
-    public List<CoreWebView2Cookie> GetAllCookies()
+    public async Task<List<CoreWebView2Cookie>> GetAllCookiesAsync()
     {
         if (_cookieManager == null) return new List<CoreWebView2Cookie>();
-        return _cookieManager.GetCookies(null).ToList();
+        var cookies = await _cookieManager.GetCookiesAsync("");
+        return cookies.ToList();
     }
 
     public async Task<List<CoreWebView2Cookie>> GetCookiesForUrlAsync(string url)
     {
         if (_cookieManager == null) return new List<CoreWebView2Cookie>();
-        return (await _cookieManager.GetCookiesAsync(url)).ToList();
+        var cookies = await _cookieManager.GetCookiesAsync(url);
+        return cookies.ToList();
     }
 
     public void AddCookie(string name, string value, string domain, string path = "/")
@@ -44,18 +47,5 @@ public sealed class CookieManager
     {
         if (_cookieManager == null) return;
         _cookieManager.DeleteAllCookies();
-    }
-
-    public void DeleteCookiesModifiedAfter(DateTime since)
-    {
-        if (_cookieManager == null) return;
-        var cookies = _cookieManager.GetCookies(null).ToList();
-        foreach (var cookie in cookies)
-        {
-            if (cookie.Expires < since)
-            {
-                _cookieManager.DeleteCookie(cookie);
-            }
-        }
     }
 }

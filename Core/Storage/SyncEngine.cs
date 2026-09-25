@@ -64,13 +64,15 @@ public sealed class SyncEngine
 
     private async Task<string> GetBookmarksDataAsync()
     {
-        var bookmarks = await BookmarksDatabase.Instance.GetAllAsync();
+        using var db = new BookmarksDatabase();
+        var bookmarks = await db.GetAllAsync();
         return JsonSerializer.Serialize(bookmarks, new JsonSerializerOptions { WriteIndented = true });
     }
 
     private async Task<string> GetHistoryDataAsync()
     {
-        var history = await HistoryDatabase.Instance.SearchAsync("", 1000);
+        using var db = new HistoryDatabase();
+        var history = await db.SearchAsync("", 1000);
         return JsonSerializer.Serialize(history, new JsonSerializerOptions { WriteIndented = true });
     }
 
