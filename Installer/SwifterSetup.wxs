@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Swifter Browser" Manufacturer="nirob100bd" Version="1.0.0"
+           UpgradeCode="A1B2C3D4-E5F6-7890-ABCD-EF1234567890"
+           Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <Feature Id="Main" Title="Swifter Browser" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="ManufacturerDir" Name="nirob100bd">
+        <Directory Id="INSTALLFOLDER" Name="Swifter" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="B2C3D4E5-F6A7-8901-BCDE-F12345678901">
+        <Shortcut Id="DesktopLnk" Name="Swifter Browser" Description="Fast. Private. Powerful."
+                  Target="[INSTALLFOLDER]Swifter.exe" WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Swifter" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="StartMenuDir" Name="Swifter">
+        <Component Id="StartMenuShortcut" Guid="C3D4E5F6-A7B8-9012-CDEF-123456789012">
+          <Shortcut Id="StartMenuLnk" Name="Swifter Browser" Description="Fast. Private. Powerful."
+                    Target="[INSTALLFOLDER]Swifter.exe" WorkingDirectory="INSTALLFOLDER" />
+          <Shortcut Id="UninstallLnk" Name="Uninstall Swifter" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" />
+          <RemoveFolder Id="StartMenuDir" On="uninstall" />
+          <RegistryValue Root="HKCU" Key="Software\Swifter" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    <Icon Id="SwifterIcon" SourceFile="Assets\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="SwifterIcon" />
+  </Package>
+</Wix>
