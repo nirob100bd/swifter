@@ -10,6 +10,7 @@ using Swifter.Core.TabEngine;
 using Swifter.Core.Config;
 using Swifter.Core.Network;
 using Swifter.Core.Protocols;
+using System.IO;
 
 namespace Swifter.Core.UI;
 

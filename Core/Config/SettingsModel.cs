@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+using System.IO;
+
 namespace Swifter.Core.Config;
 
 public sealed class SettingsModel

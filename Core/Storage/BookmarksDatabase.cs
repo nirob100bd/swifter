@@ -180,6 +180,7 @@ public sealed class BookmarksDatabase : IDisposable
             using var cmd = _conn.CreateCommand();
             cmd.CommandText = "SELECT DISTINCT folder FROM bookmarks ORDER BY folder;";
             using var reader = await cmd.ExecuteReaderAsync();
+using System.IO;
             while (await reader.ReadAsync())
             {
                 results.Add(reader.GetString(0));

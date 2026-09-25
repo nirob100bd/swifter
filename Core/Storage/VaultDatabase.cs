@@ -193,6 +193,7 @@ public sealed class VaultDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
+using System.IO;
             cmd.CommandText = "DELETE FROM credentials; DELETE FROM credit_cards; DELETE FROM form_data;";
             await cmd.ExecuteNonQueryAsync();
         }

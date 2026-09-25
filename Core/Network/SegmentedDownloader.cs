@@ -133,6 +133,7 @@ public sealed class SegmentedDownloader : IDisposable
                             foreach (var h in headers) req.Headers.TryAddWithoutValidation(h.Key, h.Value);
                         }
                         using var resp = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct);
+using System.IO;
                         resp.EnsureSuccessStatusCode();
                         var data = new byte[end - start + 1];
                         int offset = 0;

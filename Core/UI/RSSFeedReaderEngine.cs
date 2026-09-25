@@ -58,6 +58,7 @@ public sealed class RSSFeedReaderEngine : IDisposable
         {
             var response = await _httpClient.GetStringAsync(url);
             using var reader = XmlReader.Create(new StringReader(response));
+using System.IO;
             var feed = SyndicationFeed.Load(reader);
             if (feed == null) return new List<RssItem>();
             var items = feed.Items.Select(item => new RssItem

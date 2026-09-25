@@ -113,7 +113,7 @@ public sealed class WebSocketsDebuggerEngine : IDisposable
         if (!_connections.TryRemove(connectionId, out var conn)) return;
         if (conn.WebSocket.State == WebSocketState.Open)
         {
-            await conn.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.Zero);
+            await conn.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
         }
         conn.State = WebSocketState.Closed;
         conn.WebSocket.Dispose();

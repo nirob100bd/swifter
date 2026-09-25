@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Swifter.Core.Network;
 

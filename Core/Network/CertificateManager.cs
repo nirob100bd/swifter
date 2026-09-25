@@ -140,6 +140,7 @@ public sealed class CertificateManager
     {
         var certs = new List<CertificateInfo>();
         using var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+using System.IO;
         store.Open(OpenFlags.ReadOnly);
         foreach (var cert in store.Certificates)
         {

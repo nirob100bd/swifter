@@ -1,6 +1,7 @@
 using System.Windows;
 using Swifter.Core.Native;
 using Swifter.Core.UI;
+using System.IO;
 
 namespace Swifter;
 
@@ -15,7 +16,7 @@ public static class Program
         optimizer.OptimizeNetworkThreads();
 
         var app = new Application();
-        app.ShutdownMode = ShutdownMode.OnMainWindowClosing;
+        app.ShutdownMode = ShutdownMode.OnMainWindowClose;
         app.DispatcherUnhandledException += (_, e) =>
         {
             System.IO.File.AppendAllText(
