@@ -59,7 +59,7 @@ public static partial class Win32Interop
         public POINT ptMaxTrackSize;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct MONITORINFO
     {
         public int cbSize;
@@ -81,7 +81,7 @@ public static partial class Win32Interop
     [LibraryImport("user32.dll")]
     public static partial IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
 
-    [LibraryImport("user32.dll", CharSet = CharSet.Auto)]
+    [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
