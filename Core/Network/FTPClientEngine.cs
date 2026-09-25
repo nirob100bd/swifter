@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace Swifter.Core.Network;
 
 public sealed class FTPClientEngine : IDisposable
@@ -143,25 +141,26 @@ public sealed class FTPClientEngine : IDisposable
 
     public string GenerateHtmlListing(List<FtpEntry> entries)
     {
-        return $"""
-            <html><head><style>
-            body {{ font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }}
-            .entry {{ padding: 10px 16px; border-bottom: 1px solid #2a2a3e; display: flex; align-items: center; cursor: pointer; }}
-            .entry:hover {{ background: #2a2a3e; }}
-            .icon {{ margin-right: 12px; font-size: 18px; }}
-            .name {{ flex: 1; }}
-            .size {{ color: #888; min-width: 100px; text-align: right; }}
-            .date {{ color: #666; min-width: 160px; text-align: right; }}
-            h1 {{ color: #0078d4; font-size: 22px; }}
-            </style></head><body><h1>📂 FTP Browser</h1>
-            {string.Join("", entries.Select(e => $"""
+        var rows = string.Join("", entries.Select(e => $"""
             <div class="entry" onclick="window.location.href='{e.FullPath}'">
                 <span class="icon">{(e.IsDirectory ? "📁" : "📄")}</span>
                 <span class="name">{e.Name}</span>
                 <span class="size">{(e.IsDirectory ? "-" : FormatSize(e.Size))}</span>
                 <span class="date">{e.ModifiedDate}</span>
             </div>
-            """))}
+            """));
+        return $$"""
+            <html><head><style>
+            body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+            .entry { padding: 10px 16px; border-bottom: 1px solid #2a2a3e; display: flex; align-items: center; cursor: pointer; }
+            .entry:hover { background: #2a2a3e; }
+            .icon { margin-right: 12px; font-size: 18px; }
+            .name { flex: 1; }
+            .size { color: #888; min-width: 100px; text-align: right; }
+            .date { color: #666; min-width: 160px; text-align: right; }
+            h1 { color: #0078d4; font-size: 22px; }
+            </style></head><body><h1>📂 FTP Browser</h1>
+            {{rows}}
             </body></html>
             """;
     }

@@ -4,8 +4,8 @@ public static class ExtensionsPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("Extensions", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("Extensions", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">🧩</span> Extensions</h1>
             <p class="subtitle">Manage browser extensions</p>
             <div class="card" style="text-align:center;padding:40px;">

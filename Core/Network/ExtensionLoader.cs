@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace Swifter.Core.Network;
 
 public sealed class ExtensionLoader
@@ -31,7 +29,7 @@ public sealed class ExtensionLoader
             try
             {
                 var json = File.ReadAllText(manifestPath);
-                var manifest = JsonSerializer.Deserialize<ExtensionManifest>(json);
+                var manifest = System.Text.Json.JsonSerializer.Deserialize<ExtensionManifest>(json);
                 if (manifest == null) continue;
                 var ext = new Extension
                 {
@@ -60,7 +58,7 @@ public sealed class ExtensionLoader
         try
         {
             var json = File.ReadAllText(manifestPath);
-            var manifest = JsonSerializer.Deserialize<ExtensionManifest>(json);
+            var manifest = System.Text.Json.JsonSerializer.Deserialize<ExtensionManifest>(json);
             if (manifest == null) return null;
             var ext = new Extension
             {
@@ -114,29 +112,35 @@ public sealed class ExtensionLoader
 
     public string GenerateExtensionsPageHtml()
     {
-        return $"""
-            <html><head><style>
-            body {{ font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 32px; }}
-            .ext {{ background: #22223a; border-radius: 12px; padding: 20px; margin: 12px 0; display: flex; align-items: center; }}
-            .ext-info {{ flex: 1; }}
-            .ext-name {{ font-size: 16px; font-weight: 600; color: #fff; }}
-            .ext-desc {{ font-size: 13px; color: #888; margin-top: 4px; }}
-            .ext-ver {{ font-size: 11px; color: #0078d4; margin-top: 2px; }}
-            h1 {{ color: #0078d4; font-size: 24px; }}
-            .badge {{ padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }}
-            .badge-on {{ background: #1a3a1a; color: #3fb950; }}
-            .badge-off {{ background: #3a1a1a; color: #f85149; }}
-            </style></head><body><h1>🧩 Extensions</h1>
-            {string.Join("", _extensions.Select(e => $"""
-            <div class="ext">
-                <div class="ext-info">
-                    <div class="ext-name">{e.Name}</div>
-                    <div class="ext-desc">{e.Description}</div>
-                    <div class="ext-ver">v{e.Version} by {e.Author}</div>
+        var cards = string.Join("", _extensions.Select(e =>
+        {
+            var badgeClass = e.IsEnabled ? "badge-on" : "badge-off";
+            var badgeText = e.IsEnabled ? "Enabled" : "Disabled";
+            return $"""
+                <div class="ext">
+                    <div class="ext-info">
+                        <div class="ext-name">{e.Name}</div>
+                        <div class="ext-desc">{e.Description}</div>
+                        <div class="ext-ver">v{e.Version} by {e.Author}</div>
+                    </div>
+                    <span class="badge {badgeClass}">{badgeText}</span>
                 </div>
-                <span class="badge {(e.IsEnabled ? "badge-on" : "badge-off")}">{(e.IsEnabled ? "Enabled" : "Disabled")}</span>
-            </div>
-            """))}
+                """;
+        }));
+        return $$"""
+            <html><head><style>
+            body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 32px; }
+            .ext { background: #22223a; border-radius: 12px; padding: 20px; margin: 12px 0; display: flex; align-items: center; }
+            .ext-info { flex: 1; }
+            .ext-name { font-size: 16px; font-weight: 600; color: #fff; }
+            .ext-desc { font-size: 13px; color: #888; margin-top: 4px; }
+            .ext-ver { font-size: 11px; color: #0078d4; margin-top: 2px; }
+            h1 { color: #0078d4; font-size: 24px; }
+            .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+            .badge-on { background: #1a3a1a; color: #3fb950; }
+            .badge-off { background: #3a1a1a; color: #f85149; }
+            </style></head><body><h1>🧩 Extensions</h1>
+            {{cards}}
             </body></html>
             """;
     }

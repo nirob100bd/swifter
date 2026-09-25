@@ -4,8 +4,8 @@ public static class TorrentPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("Torrent Streamer", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("Torrent Streamer", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">🌊</span> Torrent Streamer</h1>
             <p class="subtitle">Stream media from torrents directly in the browser</p>
             <div style="display:flex;gap:8px;margin-bottom:16px;">

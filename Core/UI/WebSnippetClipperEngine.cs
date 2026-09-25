@@ -86,14 +86,14 @@ public sealed class WebSnippetClipperEngine
 
     public void ExportSnippetAsHtml(Snippet snippet, string outputPath)
     {
-        var html = $"""
-            <html><head><meta charset="utf-8"><title>{System.Net.WebUtility.HtmlEncode(snippet.PageTitle)}</title>
-            <style>body{{font-family:Segoe UI,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;background:#fafafa;color:#333;}}
-            .meta{{color:#888;font-size:12px;margin-bottom:16px;border-bottom:1px solid #ddd;padding-bottom:8px;}}
-            .content{{line-height:1.6;}}</style></head><body>
-            <h1>{System.Net.WebUtility.HtmlEncode(snippet.PageTitle)}</h1>
-            <div class="meta">Clipped from <a href="{System.Net.WebUtility.HtmlEncode(snippet.SourceUrl)}">{System.Net.WebUtility.HtmlEncode(snippet.SourceUrl)}</a> on {snippet.CreatedAt:yyyy-MM-dd HH:mm}</div>
-            <div class="content">{html}</div>
+        var html = $$"""
+            <html><head><meta charset="utf-8"><title>{{System.Net.WebUtility.HtmlEncode(snippet.PageTitle)}}</title>
+            <style>body{font-family:Segoe UI,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;background:#fafafa;color:#333;}
+            .meta{color:#888;font-size:12px;margin-bottom:16px;border-bottom:1px solid #ddd;padding-bottom:8px;}
+            .content{line-height:1.6;}</style></head><body>
+            <h1>{{System.Net.WebUtility.HtmlEncode(snippet.PageTitle)}}</h1>
+            <div class="meta">Clipped from <a href="{{System.Net.WebUtility.HtmlEncode(snippet.SourceUrl)}}">{{System.Net.WebUtility.HtmlEncode(snippet.SourceUrl)}}</a> on {{snippet.CreatedAt:yyyy-MM-dd HH:mm}}</div>
+            <div class="content">{{html}}</div>
             </body></html>
             """;
         File.WriteAllText(outputPath, html);

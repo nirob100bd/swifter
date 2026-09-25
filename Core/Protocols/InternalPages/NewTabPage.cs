@@ -4,14 +4,14 @@ public static class NewTabPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("New Tab", $"""
+        return ProtocolPageRenderer.WrapPage("New Tab", $$"""
             <div style="text-align:center;padding:60px 0 40px;">
                 <div style="font-size:48px;margin-bottom:8px;">⚡</div>
                 <h1 style="font-size:36px;font-weight:300;letter-spacing:-1px;">Swifter</h1>
                 <p class="subtitle" style="font-size:16px;">Fast. Private. Powerful.</p>
             </div>
             <div style="max-width:600px;margin:0 auto 40px;">
-                <input type="text" id="searchBox" placeholder="Search or enter URL..." style="width:100%;padding:14px 20px;font-size:16px;border-radius:24px;background:#22223a;border:1px solid #3a3a4a;color:#fff;" onkeydown="if(event.key==='Enter'){{window.location.href='https://www.google.com/search?q='+encodeURIComponent(this.value);}}">
+                <input type="text" id="searchBox" placeholder="Search or enter URL..." style="width:100%;padding:14px 20px;font-size:16px;border-radius:24px;background:#22223a;border:1px solid #3a3a4a;color:#fff;" onkeydown="if(event.key==='Enter'){window.location.href='https://www.google.com/search?q='+encodeURIComponent(this.value);}">
             </div>
             <div class="grid grid-2" style="max-width:600px;margin:0 auto;">
                 <a href="swifter://bookmarks" class="card" style="text-decoration:none;display:block;text-align:center;">

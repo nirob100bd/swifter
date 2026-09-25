@@ -4,8 +4,8 @@ public static class BookmarksPage
 {
     public static string GetHtml()
     {
-        return ProtocolPageRenderer.WrapPage("Bookmarks", $"""
-            {ProtocolPageRenderer.GetNavHtml()}
+        return ProtocolPageRenderer.WrapPage("Bookmarks", $$"""
+            {{ProtocolPageRenderer.GetNavHtml()}}
             <h1><span class="icon">⭐</span> Bookmarks</h1>
             <p class="subtitle">Your saved bookmarks</p>
             <input type="text" id="searchBox" class="search-box" placeholder="Search bookmarks..." oninput="searchFilter('searchBox','.bookmark-item')">

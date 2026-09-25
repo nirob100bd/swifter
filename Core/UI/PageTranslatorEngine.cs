@@ -17,29 +17,29 @@ public sealed class PageTranslatorEngine
     public string GetTranslationScript(string targetLang)
     {
         TargetLanguage = targetLang;
-        return $"""
-            (function() {{
+        return $$"""
+            (function() {
                 var textNodes = [];
                 var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-                while (walker.nextNode()) {{
+                while (walker.nextNode()) {
                     var node = walker.currentNode;
-                    if (node.nodeValue && node.nodeValue.trim().length > 1) {{
+                    if (node.nodeValue && node.nodeValue.trim().length > 1) {
                         var parent = node.parentElement;
-                        if (parent && parent.tagName !== 'SCRIPT' && parent.tagName !== 'STYLE') {{
+                        if (parent && parent.tagName !== 'SCRIPT' && parent.tagName !== 'STYLE') {
                             textNodes.push(node);
-                        }}
-                    }}
-                }}
-                textNodes.forEach(function(node) {{
+                        }
+                    }
+                }
+                textNodes.forEach(function(node) {
                     var original = node.nodeValue;
                     node._originalText = original;
-                }});
+                });
                 var indicator = document.createElement('div');
                 indicator.id = 'swifter-translate-bar';
                 indicator.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0078d4;color:white;padding:10px 16px;z-index:999999;font-family:Segoe UI,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:space-between;';
-                indicator.innerHTML = '<span>🌐 Translated to {targetLang.ToUpper()}</span><button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:white;font-size:16px;cursor:pointer;">✕</button>';
+                indicator.innerHTML = '<span>🌐 Translated to {{targetLang.ToUpper()}}</span><button onclick="this.parentElement.remove()" style="background:transparent;border:none;color:white;font-size:16px;cursor:pointer;">✕</button>';
                 document.body.insertBefore(indicator, document.body.firstChild);
-            }})();
+            })();
             """;
     }
 
