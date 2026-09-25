@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using Swifter.Core.Native;
 using Swifter.Core.TabEngine;
@@ -22,7 +23,7 @@ public sealed class MainWindow : Window
     private readonly Dictionary<int, WebView2> _webViews = new();
     private readonly DwmGlassManager _glassManager;
     private readonly WindowDragEngine _dragEngine;
-    private readonly TextBlock _statusBar;
+    private TextBlock _statusBar = null!;
     private WebView2? _activeWebView;
 
     public MainWindow()
@@ -399,7 +400,7 @@ public sealed class MainWindow : Window
         }
         if (e.Key == Key.F12)
         {
-            _activeWebView?.CoreWebView2?.OpenDevTools();
+            _activeWebView?.CoreWebView2?.OpenTaskManagerWindow();
             e.Handled = true;
         }
         if (e.Key == Key.F11)

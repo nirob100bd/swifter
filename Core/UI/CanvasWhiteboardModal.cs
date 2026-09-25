@@ -51,7 +51,7 @@ public sealed class CanvasWhiteboardModal : Window
         Content = border;
     }
 
-    private StackPanel CreateToolbar()
+    private Border CreateToolbar()
     {
         var toolbar = new StackPanel
         {
