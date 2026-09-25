@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using System.IO;
 
 namespace Swifter.Core.Storage;
 
@@ -145,7 +146,6 @@ public sealed class WebNotesDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
-using System.IO;
             cmd.CommandText = "DELETE FROM notes WHERE id = @id;";
             cmd.Parameters.AddWithValue("@id", id);
             await cmd.ExecuteNonQueryAsync();

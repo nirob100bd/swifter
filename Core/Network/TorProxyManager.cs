@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.IO;
 
 namespace Swifter.Core.Network;
 
@@ -78,7 +79,6 @@ public sealed class TorProxyManager : IDisposable
         try
         {
             using var client = new HttpClient();
-using System.IO;
             client.Timeout = TimeSpan.FromSeconds(10);
             return true;
         }

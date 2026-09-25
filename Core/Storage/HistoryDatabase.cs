@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using System.IO;
 
 namespace Swifter.Core.Storage;
 
@@ -168,7 +169,6 @@ public sealed class HistoryDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
-using System.IO;
             cmd.CommandText = "DELETE FROM history;";
             await cmd.ExecuteNonQueryAsync();
         }
