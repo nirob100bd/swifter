@@ -1,4 +1,6 @@
 using System.IO;
+using System.Net;
+
 namespace Swifter.Core.Network;
 
 public sealed class FTPClientEngine : IDisposable

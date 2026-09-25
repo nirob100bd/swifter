@@ -22,7 +22,7 @@ public sealed class QuickCalculatorWidget
     public CalculatorResult Evaluate(string input)
     {
         input = input.Trim();
-        if (Regex.IsMatch(input, @"^(time|date|now|utc)", RegexOptions.OrdinalIgnoreCase))
+        if (Regex.IsMatch(input, @"^(time|date|now|utc)", RegexOptions.IgnoreCase))
         {
             return new CalculatorResult
             {
