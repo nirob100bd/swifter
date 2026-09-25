@@ -96,6 +96,7 @@ public sealed class CacheIndexDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
+using System.IO;
             cmd.CommandText = "DELETE FROM cache_entries;";
             await cmd.ExecuteNonQueryAsync();
         }

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using System.IO;
 
 namespace Swifter.Core.UI;
 

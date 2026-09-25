@@ -115,6 +115,7 @@ public sealed class SessionArchiveDatabase : IDisposable
         try
         {
             using var cmd = _conn.CreateCommand();
+using System.IO;
             cmd.CommandText = """
                 DELETE FROM sessions WHERE is_auto = 1 AND id NOT IN (
                     SELECT id FROM sessions WHERE is_auto = 1 ORDER BY created_at DESC LIMIT @keep
